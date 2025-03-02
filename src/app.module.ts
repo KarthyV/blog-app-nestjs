@@ -4,11 +4,13 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
+import { GraphQLModule } from './configs/graphql.config.module';
 
 
 @Module({
   imports: [
     DatabaseModule,
+    GraphQLModule,
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
