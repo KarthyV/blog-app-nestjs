@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { GraphQLModule } from './configs/graphql.config.module';
+import { BlogsModule } from './blogs/blogs.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -14,7 +16,9 @@ import { GraphQLModule } from './configs/graphql.config.module';
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-    })
+    }),
+    BlogsModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

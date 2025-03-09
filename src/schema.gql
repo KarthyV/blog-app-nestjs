@@ -2,31 +2,65 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Blog {
+  title: String!
+  content: String!
+  imageUrl: String!
+}
+
 type User {
+  id: Int!
+  userUniqueId: String!
+  name: String!
   email: String!
   password: String!
   token: String!
   profilePicture: String!
+  blogs: [Blog!]!
+}
+
+type UserDto {
+  id: ID!
+  name: String!
+  email: String!
+  userUniqueId: String!
 }
 
 type Query {
   users: [User!]!
-  user(id: Int!): User!
+  blogs: [Blog!]!
+  blog(id: Int!): Blog!
+
+  """Test auth"""
+  customerAuthCheck: Boolean!
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User!
+  createBlog(createBlogInput: CreateBlogInput!): Blog!
+  updateBlog(updateBlogInput: UpdateBlogInput!): Blog!
+  removeBlog(id: Int!): Blog!
+  createSignIn(createAuthInput: CreateAuthInput!): UserDto!
+  loginUser(createAuthInput: CreateAuthInput!): UserDto!
 }
 
-input CreateUserInput {
+input UpdateUserInput {
+  id: Int!
+}
+
+input CreateBlogInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
-input UpdateUserInput {
+input UpdateBlogInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
+}
+
+input CreateAuthInput {
+  email: String!
+  password: String!
 }

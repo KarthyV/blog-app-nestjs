@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize-typescript";
+import { Blog } from "src/blogs/entities/blog.entity";
 import { User } from "src/users/entities/user.entity";
 
 export const databaseProviders = [
@@ -11,10 +12,10 @@ export const databaseProviders = [
                 port: 3306,
                 username: 'karthick',
                 password: 'karthick',
-                database: 'nest-blog'
+                database: 'nest-blog',
             });
-            sequelize.addModels([User])
-            await sequelize.sync()
+            sequelize.addModels([User, Blog])
+            await sequelize.sync({ alter: true });
             return sequelize
         }     
     }
