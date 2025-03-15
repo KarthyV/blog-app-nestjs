@@ -33,6 +33,7 @@ type Query {
 
   """Test auth"""
   customerAuthCheck: Boolean!
+  getUserStatus: UserDto!
 }
 
 type Mutation {
@@ -43,6 +44,7 @@ type Mutation {
   removeBlog(id: Int!): Blog!
   createSignIn(createAuthInput: CreateAuthInput!): UserDto!
   loginUser(createAuthInput: CreateAuthInput!): UserDto!
+  logoutUser: Boolean!
 }
 
 input UpdateUserInput {

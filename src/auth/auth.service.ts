@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserInput } from 'src/users/dto/create-user.input';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    // @InjectModel(User) private userModel: User, 
+  constructor( 
     private userService: UsersService
   ) {}
   
@@ -15,5 +14,17 @@ export class AuthService {
 
   findUser(data: Partial<CreateUserInput>) {
     return this.userService.findOne(data)
+  }
+
+  async logoutUser(res: any) {
+    const userId = res.user.userUniqueId
+    if(userId) {
+      const result = await this.userService.logoutUser(userId);
+      delete res['user'];
+      if(result) {
+        return true;
+      } else throw new BadRequestException('User not found');
+    }
+    else return false;
   }
 }

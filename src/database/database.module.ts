@@ -20,7 +20,7 @@ import { Blog } from 'src/blogs/entities/blog.entity';
     }),
     SequelizeModule.forFeature([User, Blog]), // Ensure you have SequelizeModule.forFeature for the models
   ],
-  providers: [...databaseProviders], // Adding any custom providers if needed
+  // providers: [...databaseProviders], // Adding any custom providers if needed
   exports: [SequelizeModule], // Exporting SequelizeModule for use in other modules
 })
 export class DatabaseModule {}

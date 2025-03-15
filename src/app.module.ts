@@ -7,7 +7,8 @@ import { DatabaseModule } from './database/database.module';
 import { GraphQLModule } from './configs/graphql.config.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { AuthModule } from './auth/auth.module';
-
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './auth/guards/auth.constants';
 
 @Module({
   imports: [
@@ -16,9 +17,15 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env'
     }),
     BlogsModule,
-    AuthModule
+    AuthModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1hr' },
+    })
   ],
   controllers: [AppController],
   providers: [AppService],
