@@ -15,4 +15,7 @@ export class UserDto {
 
     @Field(() => String)
     userUniqueId: string;
+
+    @Field(() => String)
+    token: string
 }

@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
-import { BlogsService } from './blogs.service';
+import { SequelizeModule } from '@nestjs/sequelize';
 import { BlogsResolver } from './blogs.resolver';
-import { DatabaseModule } from 'src/database/database.module';
+import { BlogsService } from './blogs.service';
+import { Blog } from './entities/blog.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [
+    SequelizeModule.forFeature([Blog, User]),
+  ],
   providers: [BlogsResolver, BlogsService],
 })
 export class BlogsModule {}

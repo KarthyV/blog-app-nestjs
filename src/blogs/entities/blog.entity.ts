@@ -18,10 +18,12 @@ export class Blog extends Model {
   imageUrl: string;
 
 
+
   @ForeignKey(() => User)
   @Column
   userId: number;
 
   @BelongsTo(() => User)
+  @Field(() => User)
   user?: User;
 }

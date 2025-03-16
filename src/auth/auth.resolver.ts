@@ -18,8 +18,6 @@ export class AuthResolver {
   @Mutation(() => UserDto)
     async createSignIn(@Args('createAuthInput') createUserInput: CreateAuthInput): Promise<UserDto> {
       const result = await this.authService.createNewUser(createUserInput);
-      console.log("result", result);
-      
       return result;
   }
 

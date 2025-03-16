@@ -6,7 +6,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { decryptAESHash, encryptAESHash } from 'utilities/encryption.utility';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from 'src/auth/guards/auth.constants';
+import { raw } from 'mysql2';
 
 @Injectable()
 export class UsersService {
@@ -52,7 +52,8 @@ async findOne(userInput: Partial<CreateUserInput>) {
      if(decryptedPassword === userInput.password) {
        const updatedToken = await this.jwtService.signAsync({
          email: userInput.email,
-         userUniqueId: user.userUniqueId
+         userUniqueId: user.userUniqueId,
+         userId: user.id
        })
        await this.userRepo.update({
          token: updatedToken
@@ -77,8 +78,14 @@ async findOne(userInput: Partial<CreateUserInput>) {
     });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserInput: Partial<CreateUserInput>) {
+    const user = await this.userRepo.findOne({ where: { userUniqueId: id } });
+
+    if(user) {
+      await this.userRepo.update(updateUserInput, { where: { userUniqueId: id } });
+      const updatePayload = await this.userRepo.findOne({ where: { userUniqueId: id } , raw: true });
+      return updatePayload;
+    } else throw new BadRequestException('User not found');
   }
 
   remove(id: number) {

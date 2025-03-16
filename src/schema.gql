@@ -6,6 +6,7 @@ type Blog {
   title: String!
   content: String!
   imageUrl: String!
+  user: User!
 }
 
 type User {
@@ -24,6 +25,7 @@ type UserDto {
   name: String!
   email: String!
   userUniqueId: String!
+  token: String!
 }
 
 type Query {
@@ -41,24 +43,28 @@ type Mutation {
   removeUser(id: Int!): User!
   createBlog(createBlogInput: CreateBlogInput!): Blog!
   updateBlog(updateBlogInput: UpdateBlogInput!): Blog!
-  removeBlog(id: Int!): Blog!
+  removeBlog(id: Int!): [Blog!]!
   createSignIn(createAuthInput: CreateAuthInput!): UserDto!
   loginUser(createAuthInput: CreateAuthInput!): UserDto!
   logoutUser: Boolean!
 }
 
 input UpdateUserInput {
-  id: Int!
+  profilePicture: String
+  name: String
+  password: String
 }
 
 input CreateBlogInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  title: String!
+  content: String!
+  imageUrl: String!
 }
 
 input UpdateBlogInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  title: String
+  content: String
+  imageUrl: String
   id: Int!
 }
 
