@@ -6,13 +6,15 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { decryptAESHash, encryptAESHash } from 'utilities/encryption.utility';
 import { JwtService } from '@nestjs/jwt';
-import { raw } from 'mysql2';
+import { AzureStorageService } from 'src/azure/azure.service';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private userRepo: typeof User,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private azureStorageService: AzureStorageService
   ) {}
   async create(createUserInput: Partial<CreateUserInput>) {
     const user = await this.userRepo.findOne({ where: { email: createUserInput.email }, raw: true });
@@ -85,6 +87,22 @@ async findOne(userInput: Partial<CreateUserInput>) {
       await this.userRepo.update(updateUserInput, { where: { userUniqueId: id } });
       const updatePayload = await this.userRepo.findOne({ where: { userUniqueId: id } , raw: true });
       return updatePayload;
+    } else throw new BadRequestException('User not found');
+  }
+
+  async uploadProfilePicture(userID: string, file: FileUpload) {
+    const user = await this.userRepo.findOne({ where: { userUniqueId: userID } });
+    const { createReadStream, filename } = file;
+    const stream = createReadStream();
+    
+    if(user) {
+      const profileUrl = await this.azureStorageService.uploadFile(stream, filename);
+      await this.userRepo.update({
+        profilePicture: profileUrl
+      }, {
+        where: { userUniqueId: userID }
+      });
+      return true;
     } else throw new BadRequestException('User not found');
   }
 

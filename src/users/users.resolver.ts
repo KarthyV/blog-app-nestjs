@@ -5,15 +5,13 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadedFile, UseInterceptors } from '@nestjs/common';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
-
-  // @Mutation(() => User)
-  // createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-  //   return this.usersService.create(createUserInput);
-  // }
 
   @Query(() => [User], { name: 'users' })
   findAll() {
@@ -25,6 +23,16 @@ export class UsersResolver {
   updateUser(@Context() res: any, @Args('updateUserInput') updateUserInput: UpdateUserInput) {
     const user = res.user;
     return this.usersService.update(user?.userUniqueId, updateUserInput);
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(AuthGuard)
+  async uploadProfilePicture(@Context() res: any, @Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload) {
+    const user = res.user;
+    console.log('File:', file);
+
+    await this.usersService.uploadProfilePicture(user?.userUniqueId, file);
+    return true;
   }
 
   @Mutation(() => User)

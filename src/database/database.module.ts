@@ -1,26 +1,37 @@
-// database.module.ts
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { databaseProviders } from './database.providers';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from 'src/users/entities/user.entity';
 import { Blog } from 'src/blogs/entities/blog.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forRoot({
-      dialect: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'karthick',
-      password: 'karthick',
-      database: 'nest-blog',
-      models: [User, Blog],
-      synchronize: true, // Set to `false` in production for safer migrations
-      autoLoadModels: true, // Automatically load models defined in the app
+    ConfigModule,
+    SequelizeModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        return {
+          dialect: 'mysql',
+          host: configService.get('DB_HOST'),
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_DATABASE'),
+          models: [User, Blog],
+          synchronize: true, // False in production
+          autoLoadModels: true,
+          dialectOptions: {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false, // Needed for Azure SSL connections
+            },
+          },
+        };
+      },
+      inject: [ConfigService],
     }),
-    SequelizeModule.forFeature([User, Blog]), // Ensure you have SequelizeModule.forFeature for the models
+    SequelizeModule.forFeature([User, Blog]),
   ],
-  // providers: [...databaseProviders], // Adding any custom providers if needed
-  exports: [SequelizeModule], // Exporting SequelizeModule for use in other modules
+  exports: [SequelizeModule],
 })
 export class DatabaseModule {}
